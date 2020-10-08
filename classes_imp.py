@@ -3,87 +3,95 @@ from xlrd import *
 import xlsxwriter
 
 
-def cabecalho_sec(texto=''):
-    """
-    Cabeçalho inicial do programa
-    :param texto: título do cabeçalho
-    :return: void
-    """
-    print('\n')
-    print('#' * 60 + '\n')
-    print(texto.center(67))
-    print('\n' + '#' * 60 + '\n')
-    sleep(1)
-    print('\n')
+class Formatacao:
+
+    def __init__(self):
+        self.text = ''
+        self.cor = ''
+        self.effect = ''
+        self.background = ''
+
+    def cabecalho(self, **kwargs):
+
+        option = kwargs.get('option')
+        self.text = kwargs.get('text')
+
+        if option == 'secundario':  # Estudar formas de centralizar e ajustar itens independente do tamanha da tela.
+            print('\n')
+            print('#' * 60 + '\n')
+            print(self.text.center(67))
+            print('\n' + '#' * 60 + '\n')
+            sleep(1)
+            print('\n')
+
+        elif option == 'inicio':
+            print('{:=^70}'.format(self.text))
+
+        elif option == 'final':
+            print('=' * 60 + '\n')
+
+    def _get_attr_dict(self):
+
+        dict_colors = {
+            'white': '30',
+            'red': '31',
+            'green': '32',
+            'yellow': '33',
+            'blue': '34',
+            'purple': '35',
+            'lblue': '36',
+            'grey': '37',
+        }
+
+        dict_effects = {
+            'none': '0',
+            'bold': '1',
+            'underline': '4',
+            'negative': '7',
+        }
+
+        dict_backgrounds = {
+            'white': '40',
+            'red': '41',
+            'green': '42',
+            'yellow': '43',
+            'blue': '44',
+            'purple': '45',
+            'lblue': '46',
+            'grey': '47',
+        }
+
+        self.cor = dict_colors.get(self.cor)
+        self.effect = dict_effects.get(self.effect)
+        self.background = dict_backgrounds.get(self.background)
+
+    def color(self, **kwargs):
+
+        self.text = kwargs.get('text')
+        self.cor = kwargs.get('cor')
+        self.effect = kwargs.get('effect')
+        self.background = kwargs.get('background')
+
+        self._get_attr_dict()
+
+        if self.cor is None:
+            self.cor = ''
+
+        if self.effect is None:
+            self.effect = ''
+
+        if self.background is None:
+            self.background = ''
+
+        return f'\033[{self.effect};{self.cor}{self.background}m{self.text}\033[m'
 
 
-def cor(string_col, string_cor, string_tip='0', back=''):
-    """
-    Retorna a cor selecionada.
-    :param string_col: String à ser colorida.
-    :param string_cor: Cor escolhida.
-    :param string_tip: Efeito na string - 0=none; 1=bold; 4=underline ; 7=negative
-    :param back: 40=branco; 41=vermelho; 42=verde; 43=amarelo; 44=azul; 45=roxo; 46=lblue; 47=cinza.
-    :return: Cor escolhida
-    """
-
-    if back is not '':
-        back = ';' + back
-
-    if string_cor.lower == 'white':
-        return f'\033[{string_tip};30{back}m{string_col}\033[m'
-
-    elif string_cor.lower() == 'red':
-        return f'\033[{string_tip};31{back}m{string_col}\033[m'
-
-    elif string_cor.lower() == 'green':
-        return f'\033[{string_tip};32{back}m{string_col}\033[m'
-
-    elif string_cor.lower() == 'yellow':
-        return f'\033[{string_tip};33{back}m{string_col}\033[m'
-
-    elif string_cor.lower() == 'blue':
-        return f'\033[{string_tip};34{back}m{string_col}\033[m'
-
-    elif string_cor.lower() == 'purple':
-        return f'\033[{string_tip};35{back}m{string_col}\033[m'
-
-    elif string_cor.lower() == 'lblue':
-        return f'\033[{string_tip};36{back}m{string_col}\033[m'
-
-    elif string_cor.lower() == 'grey':
-        return f'\033[{string_tip};37{back}m{string_col}\033[m'
-
-
-def cabecalho_inicio(texto=''):
-    """
-    Parte superior dos cabeçalhos intermediários.
-    :param texto: string
-    :return: void
-    """
-    print('{:=^70}'.format(texto))
-
-
-def cabecalho_final():
-    print('=' * 60 + '\n')
-
-
-class Simplificador(object):
+class Simplificador(Formatacao):
     """
     Classe simplificadora. Possui como função ler arquivo csv, deletar col, filtrar linhas e grava arq xlsx."""
 
     def __init__(self, nome, caminho, **kwargs):
-        """
-        Construtor da classe.
-        :param nome: Nome do arquivo .csv
-        :param caminho: Caminho do arquivo .csv
-        :param ncm: lista com ncm a ser filtrado.
-        :param pa: lista com filtro de países.
-        :param pc: lista com filtro de países.
-        :param quant: void.
-        :param backup: lista com os dados encontrados.
-        :param bkpsec: lista secundária com dados encontrados."""
-
+        super(Simplificador, self).__init__()
         self.nome = nome
         self.caminho = caminho
         self.ncm = kwargs.get('ncm')
@@ -108,13 +116,19 @@ class Simplificador(object):
             for row in csv_temp:
                 self.backup.append(row)
 
-    def set_del(self):
+    def set_del(self, **kwargs):
         """
         Deleta determinadas colunas do arquivo .csv
         :return: void """
 
-        colunas_del = [0, 0, 1, 1, 2, 3, 3, 3, 4, 4, 4, 4, 4, 6, 6, 7, 7, 7]
-        indices = [0, 1, 2, 3, 4, 5, 6]  # melhorar com a sintaxe [:]
+        colunas_del = kwargs.get('colunas_del')
+        indices = kwargs.get('indices')
+
+        if not colunas_del:
+            colunas_del = [0, 0, 1, 1, 2, 3, 3, 3, 4, 4, 4, 4, 4, 6, 6, 7, 7, 7]
+
+        if not indices:
+            indices = [0, 1, 2, 3, 4, 5, 6]
 
         for row in self.backup:
             for i in colunas_del:
@@ -122,23 +136,11 @@ class Simplificador(object):
             for j in indices:
                 row[j] = row[j].strip()
 
-    def set_filtro(self):
+    def set_filtro(self):           # Pesquisar algum método de comparação, mais eficiente do que o abaixo.
         """
         Filtra as listas usando os atributos da classe.
         :return: void
         """
-
-        if self.ncm is None:
-            self.ncm = []
-
-        if self.pa is None:
-            self.pa = []
-
-        if self.pc is None:
-            self.pc = []
-
-        if self.bkpsec is None:
-            self.bkpsec = []
 
         self.bkpsec.append(self.backup[0])
 
@@ -176,7 +178,7 @@ class Simplificador(object):
         excel.close()
 
 
-class DataPath(object):
+class DataPath:
     """
     Classe para tratamento dos dados
     """

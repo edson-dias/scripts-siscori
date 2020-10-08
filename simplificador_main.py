@@ -117,7 +117,7 @@ while True:
 cabecalho_final()
 
 cabecalho_inicio(cor(' Processos ', 'yellow', '1'))
-importacoes = Simplificador(nome_csv, caminho_csv_escolhido, ncm_list, filtro_paises_escolhido, filtro_paises_escolhido)
+importacoes = Simplificador(nome_csv, caminho_csv_escolhido, ncm=ncm_list, pa=filtro_paises_escolhido, pc=filtro_paises_escolhido)
 print('Iniciando a leitura do arquivo .csv ...')
 importacoes.get_csv()
 importacoes.set_del()
