@@ -1,4 +1,3 @@
-from time import sleep
 from xlrd import *
 import xlsxwriter
 
@@ -14,21 +13,20 @@ class Formatacao:
     def cabecalho(self, **kwargs):
 
         option = kwargs.get('option')
+        line_size = kwargs.get('size')
         self.text = kwargs.get('text')
 
+        if line_size is None:
+            line_size = 70
+
         if option == 'secundario':  # Estudar formas de centralizar e ajustar itens independente do tamanha da tela.
-            print('\n')
-            print('#' * 60 + '\n')
-            print(self.text.center(67))
-            print('\n' + '#' * 60 + '\n')
-            sleep(1)
-            print('\n')
+            return '\n' + '#' * line_size + '\n' + self.text.center(line_size) + '\n' + '#' * line_size + '\n' + '\n'
 
         elif option == 'inicio':
-            print('{:=^70}'.format(self.text))
+            return self.text.center(line_size, '=')
 
         elif option == 'final':
-            print('=' * 60 + '\n')
+            return '=' * line_size + '\n'
 
     def _get_attr_dict(self):
 
@@ -76,14 +74,18 @@ class Formatacao:
 
         if self.cor is None:
             self.cor = ''
+        else:
+            self.cor = ';' + self.cor
 
         if self.effect is None:
             self.effect = ''
 
         if self.background is None:
             self.background = ''
+        else:
+            self.background = ';' + self.background
 
-        return f'\033[{self.effect};{self.cor}{self.background}m{self.text}\033[m'
+        return f'\033[{self.effect}{self.cor}{self.background}m{self.text}\033[m'
 
 
 class Simplificador(Formatacao):
