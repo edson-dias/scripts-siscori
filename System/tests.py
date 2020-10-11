@@ -31,3 +31,5 @@ class TestFormatacao(unittest.TestCase):
         teste = Formatacao().color(text=self.text, cor=self.cor, effect=self.effect, background=self.background)
         expected_value = f'\033[1;31;44mteste\033[m'
         self.assertEqual(teste, expected_value)
+
+class TestSimplicador()

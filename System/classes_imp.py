@@ -1,5 +1,9 @@
 from xlrd import *
 import xlsxwriter
+import os
+
+
+BASE_DIR = os.path.dirname(__file__)
 
 
 class Formatacao:
@@ -92,16 +96,16 @@ class Simplificador(Formatacao):
     """
     Classe simplificadora. Possui como função ler arquivo csv, deletar col, filtrar linhas e grava arq xlsx."""
 
-    def __init__(self, nome, caminho, **kwargs):
+    def __init__(self, nome, **kwargs):
         super(Simplificador, self).__init__()
         self.nome = nome
-        self.caminho = caminho
+        self.backup = list()
+        self.bkpsec = list()
+
         self.ncm = kwargs.get('ncm')
         self.pa = kwargs.get('pa')
         self.pc = kwargs.get('pc')
         self.quant = kwargs.get('quant')
-        self.backup = list()
-        self.bkpsec = list()
 
     def get_csv(self):
         """
@@ -111,7 +115,7 @@ class Simplificador(Formatacao):
 
         import csv
 
-        with open(self.caminho + self.nome, encoding='latin-1') as self.nome:
+        with open(os.path.join(BASE_DIR, ''), encoding='latin-1') as self.nome:
             csv_temp = csv.reader(self.nome, delimiter='@')
             csv.field_size_limit(100000000)
 
