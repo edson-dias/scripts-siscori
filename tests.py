@@ -1,5 +1,5 @@
 import unittest
-from classes_imp import Formatacao
+from Scripts.classes_imp import Formatacao, CsvConverter
 
 
 class TestFormatacao(unittest.TestCase):
@@ -32,4 +32,12 @@ class TestFormatacao(unittest.TestCase):
         expected_value = f'\033[1;31;44mteste\033[m'
         self.assertEqual(teste, expected_value)
 
-class TestSimplicador()
+
+class TestCsvConverter(unittest.TestCase):
+    def setUp(self):
+        self.nome = 'teste.csv'
+
+    def test_get_csv(self):
+        teste = CsvConverter().get_csv(self.nome)
+        expected_value = [['1,a'], ['2,b'], ['3,c'], ['4,d'], ['5,e']]
+        self.assertEqual(teste, expected_value)
