@@ -1,9 +1,11 @@
 from xlrd import *
 import xlsxwriter
 import os
+import csv
 
 
-BASE_DIR = os.path.dirname(__file__)
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+BASE_DIR_CSV = BASE_DIR + '/Plan_CSV'
 
 
 class Formatacao:
@@ -92,72 +94,74 @@ class Formatacao:
         return f'\033[{self.effect}{self.cor}{self.background}m{self.text}\033[m'
 
 
-class Simplificador(Formatacao):
+class CsvConverter(Formatacao):
     """
     Classe simplificadora. Possui como função ler arquivo csv, deletar col, filtrar linhas e grava arq xlsx."""
 
-    def __init__(self, nome, **kwargs):
-        super(Simplificador, self).__init__()
-        self.nome = nome
-        self.backup = list()
-        self.bkpsec = list()
+    def __init__(self, backup=None, bkpsec=None, **kwargs):
+        super(CsvConverter, self).__init__()
+        if backup is None:
+            self.backup = list()
+        else:
+            self.backup = backup
 
-        self.ncm = kwargs.get('ncm')
-        self.pa = kwargs.get('pa')
-        self.pc = kwargs.get('pc')
+        if bkpsec is None:
+            self.bkpsec = list()
+        else:
+            self.bkpsec = bkpsec
+
+        self.ncm_list = kwargs.get('ncm_list')
+        self.countries_list = kwargs.get('countries_list')
+        self.sec_countries_list = kwargs.get('sec_countries_list')
         self.quant = kwargs.get('quant')
 
-    def get_csv(self):
+    def get_csv(self, csv_name, delimiter='@'):
         """
         Extrai os dados de um .csv para uma lista.
         :return: void
         """
 
-        import csv
-
-        with open(os.path.join(BASE_DIR, ''), encoding='latin-1') as self.nome:
-            csv_temp = csv.reader(self.nome, delimiter='@')
+        with open(os.path.join(BASE_DIR_CSV, csv_name), encoding='latin-1') as csv_name:
+            csv_temp = csv.reader(csv_name, delimiter=delimiter)
             csv.field_size_limit(100000000)
 
             for row in csv_temp:
                 self.backup.append(row)
 
-    def set_del(self, **kwargs):
+        return self.backup
+
+    def set_del(self, colunas_del=None):
         """
         Deleta determinadas colunas do arquivo .csv
         :return: void """
 
-        colunas_del = kwargs.get('colunas_del')
-        indices = kwargs.get('indices')
-
         if not colunas_del:
             colunas_del = [0, 0, 1, 1, 2, 3, 3, 3, 4, 4, 4, 4, 4, 6, 6, 7, 7, 7]
 
-        if not indices:
-            indices = [0, 1, 2, 3, 4, 5, 6]
+        try:
+            for row in self.backup:
+                for col in colunas_del:
+                    del row[col]
+                for j in range(len(row)):
+                    row[j] = row[j].strip()
+        except IndexError:
+            # Criar função que contabilize quantas colunas tem na planilha e retorne um valor, sugerindo a correção.
+            pass
 
-        for row in self.backup:
-            for i in colunas_del:
-                del row[i]
-            for j in indices:
-                row[j] = row[j].strip()
+        return self.backup
 
-    def set_filtro(self):           # Pesquisar algum método de comparação, mais eficiente do que o abaixo.
+    def set_filtro(self):
         """
         Filtra as listas usando os atributos da classe.
         :return: void
         """
 
-        self.bkpsec.append(self.backup[0])
+        self.bkpsec = [row_csv for row_csv in self.backup for ncm_number in self.ncm_list if ncm_number in row_csv[0]
+                       for country in self.countries_list if country in row_csv[1]
+                       for row in self.sec_countries_list if row in row_csv[2]]
 
-        for row in self.backup:
-            for i in self.ncm:
-                if i in row[0]:
-                    for lin in self.pa:
-                        if lin in row[1].lower():
-                            for line in self.pc:
-                                if line in row[2].lower():
-                                    self.bkpsec.append(row)
+        self.bkpsec.insert(0, self.backup[0])
+        return self.bkpsec
 
     def create_xlsm(self, caminho_xlsx, nome_xlsx):
         """

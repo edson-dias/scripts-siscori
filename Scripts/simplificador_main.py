@@ -74,8 +74,8 @@ def inicializacao_arquivos(caminho_r, caminho_arq_csv=None, caminho_arq_filtros=
 cabecalho_sec(cor('Módulo Simplificador - Versão: 1.0', 'lblue', '1'))
 
 caminho_raiz = '/home/afdt/Documentos/Projeto Imp/'
-caminho_csv_backup = 'System/Config/csv_backup.txt'
-caminho_filtros_backup = 'System/Config/filtros_backup.txt'
+caminho_csv_backup = 'Scripts/Config/csv_backup.txt'
+caminho_filtros_backup = 'Scripts/Config/filtros_backup.txt'
 ncm_list = list()
 
 

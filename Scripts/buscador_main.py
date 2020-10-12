@@ -5,7 +5,7 @@ from classes_imp import *
 caminho_raiz = '/home/afdt/Documentos/Projeto Imp/'
 caminho_bd_sucesso = 'BD/Sucesso/'
 caminho_bd_limbo = 'BD/Limbo/'
-caminho_siscori_backup = 'System/Config/siscori_backup.txt'
+caminho_siscori_backup = 'Scripts/Config/siscori_backup.txt'
 
 cabecalho_sec(cor('Módulo Buscador - Versão: 1.0', 'lblue', '1'))
 
