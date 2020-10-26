@@ -3,9 +3,58 @@ import xlsxwriter
 import os
 import csv
 
-
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-BASE_DIR_CSV = BASE_DIR + '/Plan_CSV'
+DIR_CSV = BASE_DIR + '/Plan_CSV'
+DIR_XLSX = BASE_DIR + '/Plan_XLSX'
+
+
+def _create_file_xlsx(file_name, xlsx_path=None):
+    if xlsx_path is None:
+        xlsx_path = DIR_XLSX
+
+    excel = xlsxwriter.Workbook(os.path.join(xlsx_path, file_name))
+    #  plan1 = excel.add_worksheet()
+    excel.close()
+
+
+def change_file(func):
+    def open_file(*args, **kwargs):
+
+        dict_formats = {
+            'xlsx': DIR_XLSX,
+            'csv': DIR_CSV,
+            }
+
+        file_name = kwargs.get('file_name')
+        mode = kwargs.get('mode')
+        extension = file_name.split('.')[-1].lower()
+        file_path = dict_formats.get(extension)
+
+        a = args[0]
+
+        if extension == 'xlsx':
+            excel = xlsxwriter.Workbook(os.path.join(file_path, file_name))
+            plan1 = excel.add_worksheet()
+            lin = 0
+            col = 0
+
+            for row in a.bkpsec:
+                for i in row:
+                    plan1.write(lin, col, i)
+                    if col >= 6:
+                        col = 0
+                    else:
+                        col += 1
+                lin += 1
+            func(*args, **kwargs)
+            excel.close()
+
+        else:
+            file = open(os.path.join(file_path, file_name), mode)
+            a = func
+            file.close()
+
+    return open_file
 
 
 class Formatacao:
@@ -114,6 +163,7 @@ class CsvConverter(Formatacao):
         self.countries_list = kwargs.get('countries_list')
         self.sec_countries_list = kwargs.get('sec_countries_list')
         self.quant = kwargs.get('quant')
+        # alterar para self.attr = [k=v for k,v in kwargs.items()]
 
     def get_csv(self, csv_name, delimiter='@'):
         """
@@ -121,7 +171,7 @@ class CsvConverter(Formatacao):
         :return: void
         """
 
-        with open(os.path.join(BASE_DIR_CSV, csv_name), encoding='latin-1') as csv_name:
+        with open(os.path.join(DIR_CSV, csv_name), encoding='latin-1') as csv_name:
             csv_temp = csv.reader(csv_name, delimiter=delimiter)
             csv.field_size_limit(100000000)
 
@@ -156,36 +206,21 @@ class CsvConverter(Formatacao):
         :return: void
         """
 
-        self.bkpsec = [row_csv for row_csv in self.backup for ncm_number in self.ncm_list if ncm_number in row_csv[0]
+        self.bkpsec = [row_csv for row_csv in self.backup
+                       for ncm_number in self.ncm_list if ncm_number in row_csv[0]
                        for country in self.countries_list if country in row_csv[1]
                        for row in self.sec_countries_list if row in row_csv[2]]
 
         self.bkpsec.insert(0, self.backup[0])
         return self.bkpsec
 
-    def create_xlsm(self, caminho_xlsx, nome_xlsx):
-        """
-        Cria arquivo xlsl.
-        :param caminho_xlsx: caminho onde o arquivo será salvo
-        :param nome_xlsx: Nome do arquivo.
-        :return: void.
-        """
+    @change_file
+    def set_data_xlsx(self, **kwargs):
 
-        lin = 0
-        col = 0
+       # _create_file_xlsx(file_name)
+        pass
 
-        excel = xlsxwriter.Workbook(caminho_xlsx + nome_xlsx + '.xlsx')
-        plan1 = excel.add_worksheet()
 
-        for row in self.bkpsec:
-            for i in row:
-                plan1.write(lin, col, i)
-                if col >= 6:
-                    col = 0
-                else:
-                    col += 1
-            lin += 1
-        excel.close()
 
 
 class DataPath:
