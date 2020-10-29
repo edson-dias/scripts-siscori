@@ -3,58 +3,55 @@ import xlsxwriter
 import os
 import csv
 
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 DIR_CSV = BASE_DIR + '/Plan_CSV'
 DIR_XLSX = BASE_DIR + '/Plan_XLSX'
+DICT_EXTENSIONS = {
+    'xlsx': DIR_XLSX,
+    'csv': DIR_CSV,
+}
 
 
-def _create_file_xlsx(file_name, xlsx_path=None):
-    if xlsx_path is None:
-        xlsx_path = DIR_XLSX
+def _file_extension(file_name):
+    extension = file_name.split('.')[-1].lower()
+    file_path = DICT_EXTENSIONS.get(extension)
+    return extension, file_path
 
-    excel = xlsxwriter.Workbook(os.path.join(xlsx_path, file_name))
-    #  plan1 = excel.add_worksheet()
+
+def _xlsx_writing(data, _file):
+    excel = xlsxwriter.Workbook(_file)
+    plan1 = excel.add_worksheet()
+    lin = 0
+    col = 0
+
+    for row in data:
+        for i in row:
+            plan1.write(lin, col, i)
+            if col >= len(data[0]):
+                col = 0
+            else:
+                col += 1
+        lin += 1
     excel.close()
 
 
-def change_file(func):
-    def open_file(*args, **kwargs):
+def _txt_writing(data, _file, mode):
+    file = open(_file, mode)
+    for row in data:
+        file.write(row)
+    file.close()
 
-        dict_formats = {
-            'xlsx': DIR_XLSX,
-            'csv': DIR_CSV,
-            }
 
-        file_name = kwargs.get('file_name')
-        mode = kwargs.get('mode')
-        extension = file_name.split('.')[-1].lower()
-        file_path = dict_formats.get(extension)
+def _file_manipulate(data, _file, mode, extension):
 
-        a = args[0]
+    if 'w' in mode:  # or a ??
 
         if extension == 'xlsx':
-            excel = xlsxwriter.Workbook(os.path.join(file_path, file_name))
-            plan1 = excel.add_worksheet()
-            lin = 0
-            col = 0
+            _xlsx_writing(data, _file)
 
-            for row in a.bkpsec:
-                for i in row:
-                    plan1.write(lin, col, i)
-                    if col >= 6:
-                        col = 0
-                    else:
-                        col += 1
-                lin += 1
-            func(*args, **kwargs)
-            excel.close()
-
-        else:
-            file = open(os.path.join(file_path, file_name), mode)
-            a = func
-            file.close()
-
-    return open_file
+        elif extension == 'csv':
+            _txt_writing(data, _file, mode)
 
 
 class Formatacao:
@@ -214,13 +211,19 @@ class CsvConverter(Formatacao):
         self.bkpsec.insert(0, self.backup[0])
         return self.bkpsec
 
-    @change_file
-    def set_data_xlsx(self, **kwargs):
+    def set_data_file(self, **kwargs):
 
-       # _create_file_xlsx(file_name)
-        pass
+        file_name = kwargs.get('file_name')
+        mode = kwargs.get('mode')
+        extension, file_path = _file_extension(file_name)
+        file = os.path.join(file_path, file_name)
 
+        if 'data' in kwargs.keys():
+            data = kwargs.get('data')
+        else:
+            data = self.bkpsec
 
+        _file_manipulate(data, file, mode, extension)
 
 
 class DataPath:
