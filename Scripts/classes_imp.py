@@ -1,57 +1,7 @@
-from xlrd import *
 import xlsxwriter
-import os
-import csv
+from xlrd import *
 
-
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-DIR_CSV = BASE_DIR + '/Plan_CSV'
-DIR_XLSX = BASE_DIR + '/Plan_XLSX'
-DICT_EXTENSIONS = {
-    'xlsx': DIR_XLSX,
-    'csv': DIR_CSV,
-}
-
-
-def _file_extension(file_name):
-    extension = file_name.split('.')[-1].lower()
-    file_path = DICT_EXTENSIONS.get(extension)
-    return extension, file_path
-
-
-def _xlsx_writing(data, _file):
-    excel = xlsxwriter.Workbook(_file)
-    plan1 = excel.add_worksheet()
-    lin = 0
-    col = 0
-
-    for row in data:
-        for i in row:
-            plan1.write(lin, col, i)
-            if col >= len(data[0]):
-                col = 0
-            else:
-                col += 1
-        lin += 1
-    excel.close()
-
-
-def _txt_writing(data, _file, mode):
-    file = open(_file, mode)
-    for row in data:
-        file.write(row)
-    file.close()
-
-
-def _file_manipulate(data, _file, mode, extension):
-
-    if 'w' in mode:  # or a ??
-
-        if extension == 'xlsx':
-            _xlsx_writing(data, _file)
-
-        elif extension == 'csv':
-            _txt_writing(data, _file, mode)
+from Scripts.IO_formats import file_manipulate, file_extension, DIR_CSV
 
 
 class Formatacao:
@@ -141,8 +91,6 @@ class Formatacao:
 
 
 class CsvConverter(Formatacao):
-    """
-    Classe simplificadora. Possui como função ler arquivo csv, deletar col, filtrar linhas e grava arq xlsx."""
 
     def __init__(self, backup=None, bkpsec=None, **kwargs):
         super(CsvConverter, self).__init__()
@@ -162,25 +110,16 @@ class CsvConverter(Formatacao):
         self.quant = kwargs.get('quant')
         # alterar para self.attr = [k=v for k,v in kwargs.items()]
 
-    def get_csv(self, csv_name, delimiter='@'):
-        """
-        Extrai os dados de um .csv para uma lista.
-        :return: void
-        """
+    def get_csv(self, **kwargs):
 
-        with open(os.path.join(DIR_CSV, csv_name), encoding='latin-1') as csv_name:
-            csv_temp = csv.reader(csv_name, delimiter=delimiter)
-            csv.field_size_limit(100000000)
-
-            for row in csv_temp:
-                self.backup.append(row)
-
+        kwargs['data'] = self.backup
+        kwargs['mode'] = 'rt'
+        file_manipulate(**kwargs)
         return self.backup
+        #  Estou atribuindo valores a lista _data ou a lista self.backup??? VERIFICAR! (Possivel ajuste: *args passando self como argumento.)
+
 
     def set_del(self, colunas_del=None):
-        """
-        Deleta determinadas colunas do arquivo .csv
-        :return: void """
 
         if not colunas_del:
             colunas_del = [0, 0, 1, 1, 2, 3, 3, 3, 4, 4, 4, 4, 4, 6, 6, 7, 7, 7]
@@ -198,10 +137,6 @@ class CsvConverter(Formatacao):
         return self.backup
 
     def set_filtro(self):
-        """
-        Filtra as listas usando os atributos da classe.
-        :return: void
-        """
 
         self.bkpsec = [row_csv for row_csv in self.backup
                        for ncm_number in self.ncm_list if ncm_number in row_csv[0]
@@ -209,21 +144,14 @@ class CsvConverter(Formatacao):
                        for row in self.sec_countries_list if row in row_csv[2]]
 
         self.bkpsec.insert(0, self.backup[0])
-        return self.bkpsec
+        del self.backup
 
     def set_data_file(self, **kwargs):
 
-        file_name = kwargs.get('file_name')
-        mode = kwargs.get('mode')
-        extension, file_path = _file_extension(file_name)
-        file = os.path.join(file_path, file_name)
+        if 'data' not in kwargs.keys():
+            kwargs['data'] = self.bkpsec
 
-        if 'data' in kwargs.keys():
-            data = kwargs.get('data')
-        else:
-            data = self.bkpsec
-
-        _file_manipulate(data, file, mode, extension)
+        file_manipulate(**kwargs)
 
 
 class DataPath:

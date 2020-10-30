@@ -1,4 +1,5 @@
 import unittest
+import os
 from Scripts.classes_imp import Formatacao, CsvConverter
 
 
@@ -35,16 +36,17 @@ class TestFormatacao(unittest.TestCase):
 
 class TestCsvConverter(unittest.TestCase):
     def setUp(self):
-        self.nome = 'teste.csv'
+        self.nome_csv = 'teste.csv'
+        self.nome_xlsx = 'teste.xlsx'
 
     def test_get_csv(self):
-        teste = CsvConverter().get_csv(self.nome)
+        teste = CsvConverter().get_csv(file_name=self.nome_csv, delimiter='@')
         expected_value = [['1', 'a', 'teste1'], ['2', 'b', 'teste2'], ['3', 'c', 'teste3'], ['4', 'd', 'teste4']]
         self.assertEqual(teste, expected_value)
 
-    def test_set_del(self):
+    def test_set_del(self):  # Alterar conforme o test_set_filtro
         teste = CsvConverter()
-        teste.get_csv(self.nome)
+        teste.get_csv(file_name=self.nome_csv, delimiter='@')
         teste = teste.set_del([0, 1])
         expected_value = [['a'], ['b'], ['c'], ['d']]
         self.assertEqual(teste, expected_value)
@@ -56,3 +58,20 @@ class TestCsvConverter(unittest.TestCase):
         teste = teste.set_filtro()
         expected_value = [['ncm_col', 'pa_col', 'pc_col'], ['ncm1', 'pa1', 'pc1']]
         self.assertEqual(teste, expected_value)
+
+    '''def test_create_file_xlsx(self):
+
+        teste = CsvConverter()
+        _create_file_xlsx(self.nome_xlsx)
+
+        try:
+            file_check = open(os.path.join(os.path.dirname(__file__), self.nome_xlsx), 'rt')
+            file_check.close()
+        except FileNotFoundError:
+            expected = False
+        else:
+            expected = True
+
+        self.assertTrue(expected)
+        '''
+
