@@ -51,11 +51,40 @@ def _csv_reading(_data, _file, **kwargs):
             _data.append(row)
 
 
-DICT_FUNCTIONS_EXTENSIONS = {
-    'w-xlsx': _xlsx_writing,
-    'w-txt': _txt_writing,
-    'r-csv': _csv_reading,
-}
+def _txt_reading(_data, _file, **kwargs):
+    mode = kwargs.get('mode')
+    lista = []
+
+    try:
+        temp = open(_file, mode)
+    except FileExistsError:
+        print('Houve um erro com o arquivo!')
+    else:
+        for lin in temp:
+            lista.append(lin)
+            return lista
+    finally:
+        temp.close()
+
+
+def _create_file(file):
+    try:
+        temp = open(file, 'wt+')
+    except FileExistsError:
+        print('Houve um erro com a criação do arquivo!')
+    finally:
+        temp.close()
+
+
+def is_there_file(file):
+    try:
+        temp = open(file, 'rt')
+    except FileNotFoundError:
+        _create_file(file)
+    else:
+        return True
+    finally:
+        temp.close()
 
 
 def file_extension(file_name):
@@ -67,10 +96,13 @@ def file_extension(file_name):
 def file_manipulate(**kwargs):
 
     _data = kwargs.get('data')
-    mode = kwargs.get('mode')
+    mode = kwargs.get('mode', 'rt')
     file_name = kwargs.get('file_name')
-
     extension, file_path = file_extension(file_name)
+
+    if 'file_path' in kwargs.keys():
+        file_path = kwargs.get('file_path')
+
     _file = os.path.join(file_path, file_name)
 
     if 'w' in mode:  # or a ??
@@ -78,3 +110,11 @@ def file_manipulate(**kwargs):
 
     elif 'r' in mode:
         return DICT_FUNCTIONS_EXTENSIONS.get('r-' + extension)(_data, _file, **kwargs)
+
+
+DICT_FUNCTIONS_EXTENSIONS = {
+    'w-xlsx': _xlsx_writing,
+    'w-txt': _txt_writing,
+    'r-csv': _csv_reading,
+    'r-txt': _txt_reading,
+}

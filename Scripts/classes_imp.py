@@ -1,7 +1,7 @@
 import xlsxwriter
 from xlrd import *
 
-from Scripts.IO_formats import file_manipulate, file_extension, DIR_CSV
+from Scripts.IO_formats import file_manipulate
 
 
 class Formatacao:
@@ -90,10 +90,10 @@ class Formatacao:
         return f'\033[{self.effect}{self.cor}{self.background}m{self.text}\033[m'
 
 
-class CsvConverter(Formatacao):
+class SiscoriData(Formatacao):
 
     def __init__(self, backup=None, bkpsec=None, **kwargs):
-        super(CsvConverter, self).__init__()
+        super(SiscoriData, self).__init__()
         if backup is None:
             self.backup = list()
         else:
@@ -111,16 +111,12 @@ class CsvConverter(Formatacao):
         # alterar para self.attr = [k=v for k,v in kwargs.items()]
 
     def get_csv(self, **kwargs):
-
         kwargs['data'] = self.backup
         kwargs['mode'] = 'rt'
         file_manipulate(**kwargs)
         return self.backup
-        #  Estou atribuindo valores a lista _data ou a lista self.backup??? VERIFICAR! (Possivel ajuste: *args passando self como argumento.)
-
 
     def set_del(self, colunas_del=None):
-
         if not colunas_del:
             colunas_del = [0, 0, 1, 1, 2, 3, 3, 3, 4, 4, 4, 4, 4, 6, 6, 7, 7, 7]
 
@@ -145,6 +141,7 @@ class CsvConverter(Formatacao):
 
         self.bkpsec.insert(0, self.backup[0])
         del self.backup
+        return self.bkpsec
 
     def set_data_file(self, **kwargs):
 
@@ -153,80 +150,18 @@ class CsvConverter(Formatacao):
 
         file_manipulate(**kwargs)
 
+    def get_dados(self, **kwargs):
+        file_manipulate(**kwargs)
+
 
 class DataPath:
-    """
-    Classe para tratamento dos dados
-    """
 
-    def __init__(self, caminho_raiz='/home', caminho_arq='/home'):
-        """
-        Construtor da classe DataPath.
-        :param caminho_raiz: caminho raiz do sistema.
-        :param caminho_arq: caminho dos arquivos de configuração
-        """
+    def __init__(self):
+        pass
 
-        self.caminho_raiz = caminho_raiz
-        self.caminho_arq = caminho_arq
 
-    def file_check(self):
-        """
-        Checa se uma planilha existe ou não.
-        :return: Boolean
-        """
-
-        try:
-            a = open(self.caminho_raiz + self.caminho_arq, 'rt')
-            a.close()
-        except FileNotFoundError:
-            return False
-        else:
-            return True
-
-    def criar_arquivo(self):
-        """
-        Cria arquivo .txt no diretório informado.
-        :return: void
-        """
-
-        try:
-            a = open(self.caminho_raiz + self.caminho_arq, 'wt+')
-            a.close()
-        except FileExistsError:
-            print('Houve um erro com a criação do arquivo!')
-        else:
-            pass
-
-    def get_dados(self):
-        """
-        Extrai os dados do arquivo .txt
-        :return: list()
-        """
-        arquivo_temp = None
-        lista = list()
-
-        try:
-            arquivo_temp = open(self.caminho_raiz + self.caminho_arq, 'rt')
-        except FileExistsError:
-            print('Houve um erro com o arquivo!')
-        else:
-            for lin in arquivo_temp:
-                temp = lin.replace('\n', '').split(',')
-                lista.append(temp)
-        finally:
-            arquivo_temp.close()
-            return lista
 
     def set_path(self, lista_temp, texto, flag=0):
-        """
-        Realiza a escolha dos caminhos/filtros de acordo com o valor digitado no terminal
-        :param lista_temp: list()
-        :param texto: string
-        :param flag: int para indicar qual texto deve ser mostrado (0 = simplificador / 1 = buscador)
-        :return: list() ou string
-        """
-
-        cabecalho_inicio(texto)
 
         for i in range(0, len(lista_temp)):
             print(f'{lista_temp[i]}'.ljust(57) + '[' + cor(f'{i + 1}', 'red', '1') + ']')
