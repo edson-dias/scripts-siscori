@@ -1,8 +1,8 @@
 import xlsxwriter
 from xlrd import *
+from collections import deque
 
-from Scripts.IO_formats import file_manipulate
-
+from Scripts.IO_formats import file_manipulate, is_there_file
 
 class Formatacao:
 
@@ -150,89 +150,33 @@ class SiscoriData(Formatacao):
 
         file_manipulate(**kwargs)
 
-    def get_dados(self, **kwargs):
-        file_manipulate(**kwargs)
+
+def available_paths(**kwargs):
+    file_name = kwargs.get('file_name')
+    file_path = kwargs.get('file_path')
+
+    is_there_file(os.path.join(file_path, file_name))
+
+    paths = deque(file_manipulate(**kwargs), maxlen=12)
+
+    return paths
 
 
-class DataPath:
+def choose_path(**kwargs):
+    paths = available_paths(**kwargs)
 
-    def __init__(self):
-        pass
+    [print('[' + str(paths.index(itens)+1) + '] - ' + str(itens)) for itens in paths]
+    choice = int(input('Pasta Escolhida: ')) - 1
+
+    try:
+        paths[choice]
+    except IndexError:
+        print('Opção Inexistente!')
+    else:
+        return paths[choice]
 
 
-
-    def set_path(self, lista_temp, texto, flag=0):
-
-        for i in range(0, len(lista_temp)):
-            print(f'{lista_temp[i]}'.ljust(57) + '[' + cor(f'{i + 1}', 'red', '1') + ']')
-
-        if flag == 0:
-            print(f'Add novos caminhos de arquivos CSV'.ljust(57) + '[' + cor('0', 'red', '1') + ']')
-            print(f'Add novos filtros de países.'.ljust(56) + '[' + cor('-1', 'red', '1') + ']' + '\n')
-        elif flag == 1:
-            print(f'Add novos caminhos de arquivos xlsx: '.ljust(57) + '[' + cor('0', 'red', '1') + ']')
-
-        a = int(input(cor('Escolha uma das opções acima: ', 'red', '1')))
-
-        cabecalho_final()
-
-        if a == 1:
-            return lista_temp[0]
-
-        elif a == 2:
-            return lista_temp[1]
-
-        elif a == 3:
-            return lista_temp[2]
-
-        elif a == 0:
-            temp = self.caminho_raiz + 'Data/' + input(f'Complemente o caminho "{self.caminho_raiz}Data/": ')
-
-            if len(lista_temp) > 2:
-
-                while len(lista_temp) > 2:
-                    del lista_temp[2]
-
-                self.set_dados(temp + '\n', 'wt+')
-
-                for row in lista_temp:
-                    self.set_dados(row + '\n', 'at')
-            else:
-
-                self.set_dados(temp + '\n', 'at')
-
-            return temp
-
-        elif a == -1:
-            string_temp = string_temp2 = ''
-            while True:
-                temp = input(f'Digite os países a serem filtrados ou pressione "f" para sair: ')
-                if temp not in 'Ff':
-                    if string_temp == '':
-                        string_temp = temp
-                    else:
-                        string_temp = string_temp + ',' + temp
-                else:
-                    break
-
-            while len(lista_temp) > 2:
-                del lista_temp[2]
-
-            self.set_dados(string_temp + '\n', 'wt+')
-
-            for row in lista_temp:
-                for piece in row:
-                    if string_temp2 == '':
-                        string_temp2 = piece
-                    else:
-                        string_temp2 = string_temp2 + ',' + piece
-
-                self.set_dados(string_temp2 + '\n', 'at')
-                string_temp2 = ''
-
-            return string_temp.split(',')
-
-    def set_dados(self, temp, modo_de_escrita='wt+'):
+def set_dados(temp, modo_de_escrita='wt+'):
 
         """ Insere os dados no arquivo de backup.
         Cuidado ao utilizar wt+ no modo_de_escrita. Sobrescreve o arquivo backup.
@@ -256,7 +200,7 @@ class DataPath:
 
             else:
                 a.close()
-
+'''
 
 class Buscador(DataPath):
     """
@@ -351,3 +295,4 @@ class Buscador(DataPath):
             lista_temp.append(temp_sheet.row_values(row))
 
         return lista_temp
+'''

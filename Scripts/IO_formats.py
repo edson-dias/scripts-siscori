@@ -2,16 +2,6 @@ import csv
 import os
 import xlsxwriter
 
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-
-DIR_CSV = BASE_DIR + '/Plan_CSV'
-DIR_XLSX = BASE_DIR + '/Plan_XLSX'
-
-DICT_EXTENSIONS = {
-    'xlsx': DIR_XLSX,
-    'csv': DIR_CSV,
-}
-
 
 def _xlsx_writing(_data, _file, **kwargs):
     excel = xlsxwriter.Workbook(_file)
@@ -95,9 +85,10 @@ def file_extension(file_name):
 
 def file_manipulate(**kwargs):
 
-    _data = kwargs.get('data')
+    _data = kwargs.get('data', list())
     mode = kwargs.get('mode', 'rt')
     file_name = kwargs.get('file_name')
+
     extension, file_path = file_extension(file_name)
 
     if 'file_path' in kwargs.keys():
@@ -117,4 +108,16 @@ DICT_FUNCTIONS_EXTENSIONS = {
     'w-txt': _txt_writing,
     'r-csv': _csv_reading,
     'r-txt': _txt_reading,
+}
+
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+
+DIR_CSV = BASE_DIR + '/Plan_CSV'
+DIR_XLSX = BASE_DIR + '/Plan_XLSX'
+DIR_LOGS = BASE_DIR + '/Logs'
+
+DICT_EXTENSIONS = {
+    'xlsx': DIR_XLSX,
+    'csv': DIR_CSV,
+    'txt': DIR_LOGS,
 }
