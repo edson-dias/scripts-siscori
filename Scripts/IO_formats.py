@@ -42,7 +42,7 @@ def _csv_reading(_data, _file, **kwargs):
 
 
 def _txt_reading(_data, _file, **kwargs):
-    mode = kwargs.get('mode')
+    mode = kwargs.get('mode', 'rt')
     lista = []
 
     try:
@@ -52,9 +52,8 @@ def _txt_reading(_data, _file, **kwargs):
     else:
         for lin in temp:
             lista.append(lin)
-            return lista
-    finally:
         temp.close()
+        return lista
 
 
 def _create_file(file):
@@ -62,7 +61,7 @@ def _create_file(file):
         temp = open(file, 'wt+')
     except FileExistsError:
         print('Houve um erro com a criação do arquivo!')
-    finally:
+    else:
         temp.close()
 
 
@@ -72,9 +71,8 @@ def is_there_file(file):
     except FileNotFoundError:
         _create_file(file)
     else:
-        return True
-    finally:
         temp.close()
+        return True
 
 
 def file_extension(file_name):
