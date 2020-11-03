@@ -1,9 +1,8 @@
 import unittest
 import os
 import xlrd
-from Scripts.classes_imp import Formatacao, SiscoriData, available_paths
-from Scripts.IO_formats import DIR_XLSX, DIR_LOGS
-from collections import deque
+from Scripts.classes_imp import Formatacao, SiscoriData
+from Scripts.IO_formats import DIR_XLSX, choose_path
 
 
 class TestFormatacao(unittest.TestCase):
@@ -82,14 +81,11 @@ class TestCsvConverter(unittest.TestCase):
 
         self.assertEqual(self.csv_content, expected_value)
 
-    def test_available_paths(self):
-        lista = []
-
-        teste = available_paths(file_name=self.nome_txt, file_path=DIR_LOGS)
-
-        with open(os.path.join(DIR_LOGS, self.nome_txt), 'rt') as file:
-            [lista.append(row) for row in file]
-
-        expected_value = deque(lista, maxlen=12)
-
+    def test_choose_path(self):
+        teste = choose_path()
+        expected_value = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
         self.assertEqual(teste, expected_value)
+
+
+# PESQUISAR MOCK PARA SIMULAR ENTRADAS NO TECLADO
+# IMPLEMENTAR UM TESTE PARA CHOSSE_PATH COM TODAS ESCOLHAS E UM PARA UMA UNICA ESCOLHA
