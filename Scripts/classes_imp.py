@@ -1,4 +1,4 @@
-from Scripts.IO_formats import file_manipulate
+from Scripts.IO_formats import file_manipulate,
 
 
 class Formatacao:
