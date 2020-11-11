@@ -104,7 +104,8 @@ def choose_path():
     paths = []
 
     print('Escolha uma ou mais das opções abaixo e tecle "S" para sair.\nTecle "T" para escolher todas as opçoes. \n')
-    [print('[' + str(LIST_PATHS.index(itens)+1) + '] - ' + str(itens)) for itens in LIST_PATHS]
+    [print('[' + str(LIST_PATHS.index(itens) + 1) + '] - ' + str(itens))
+     for itens in LIST_PATHS]
 
     while True:
         choice = input('Pasta Escolhida: ')
@@ -118,15 +119,22 @@ def choose_path():
 
             else:
                 try:
-                    LIST_PATHS[int(choice)-1]
+                    LIST_PATHS[int(choice) - 1]
                 except IndexError:
                     print('Opção Inexistente!')
                 else:
-                    paths.append(LIST_PATHS[int(choice)-1])
+                    paths.append(LIST_PATHS[int(choice) - 1])
     return paths
 
 
-LIST_PATHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+
+DIR_CSV = BASE_DIR + '/Plan_CSV'
+DIR_XLSX = BASE_DIR + '/Plan_XLSX'
+DIR_LOGS = BASE_DIR + '/Logs'
+
+LIST_PATHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai',
+              'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
 
 
 DICT_FUNCTIONS_EXTENSIONS = {
@@ -136,11 +144,6 @@ DICT_FUNCTIONS_EXTENSIONS = {
     'r-txt': _txt_reading,
 }
 
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-
-DIR_CSV = BASE_DIR + '/Plan_CSV'
-DIR_XLSX = BASE_DIR + '/Plan_XLSX'
-DIR_LOGS = BASE_DIR + '/Logs'
 
 DICT_EXTENSIONS = {
     'xlsx': DIR_XLSX,
