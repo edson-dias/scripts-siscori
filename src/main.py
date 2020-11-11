@@ -31,6 +31,7 @@ if __name__ == '__main__':
         print(f'{x[0]}: {x[1]}')
 
 # STOP MARK: CONTINUAR O PRINT DOS FILTROS ACIMA!!
+# teste
 
     '''print(f'Pai')
 
