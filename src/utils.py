@@ -50,7 +50,7 @@ def _txt_reading(_data, _file, **kwargs):
     except FileExistsError:
         print('Houve um erro com o arquivo!')
     else:
-        [lista.append(lin) for lin in temp]
+        [lista.append(lin.replace("\n", "")) for lin in temp]
         temp.close()
         return lista
 
@@ -62,6 +62,26 @@ def _create_file(file):
         print('Houve um erro com a criação do arquivo!')
     else:
         temp.close()
+
+
+def _get_attr_dict(**kwargs):
+
+    cor = kwargs.get('cor')
+    effect = kwargs.get('effect')
+    background = kwargs.get('background')
+
+    color_number = DICT_COLORS.get(cor, '')
+    effect_number = DICT_EFFECTS.get(effect, '')
+    background_number = DICT_BACKGROUNDS.get(background, '')
+
+    return color_number, effect_number, background_number
+
+
+def color(**kwargs):
+    cor, effect, background = _get_attr_dict(**kwargs)
+    text = kwargs.get('text', '')
+
+    return f'\033[{effect}{cor}{background}m{text}\033[m'
 
 
 def is_there_file(file):
@@ -136,6 +156,13 @@ DIR_LOGS = BASE_DIR + '/Logs'
 LIST_PATHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai',
               'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
 
+COMMON_FILES = [
+    '39',
+    '73',
+    '85',
+    '91',
+    '94',
+]
 
 DICT_FUNCTIONS_EXTENSIONS = {
     'w-xlsx': _xlsx_writing,
@@ -149,4 +176,33 @@ DICT_EXTENSIONS = {
     'xlsx': DIR_XLSX,
     'csv': DIR_CSV,
     'txt': DIR_LOGS,
+}
+
+DICT_COLORS = {
+    'white': ';30',
+    'red': ';31',
+    'green': ';32',
+    'yellow': ';33',
+    'blue': ';34',
+    'purple': ';35',
+    'lblue': ';36',
+    'grey': ';37',
+}
+
+DICT_EFFECTS = {
+    'none': '0',
+    'bold': '1',
+    'underline': '4',
+    'negative': '7',
+}
+
+DICT_BACKGROUNDS = {
+    'white': ';40',
+    'red': ';41',
+    'green': ';42',
+    'yellow': ';43',
+    'blue': ';44',
+    'purple': ';45',
+    'lblue': ';46',
+    'grey': ';47',
 }

@@ -6,11 +6,8 @@ Autores: Edson, Henrique.
 Versão: 1.0
 """
 
-import sys
-
-from siscori_classes import SiscoriData
-from utils import file_manipulate
-from decorators import header
+from src.utils import file_manipulate, color
+from src.decorators import header
 
 
 @header
@@ -18,62 +15,43 @@ def set_header(**kwargs):
     pass
 
 
+def get_filters():
+    choice = list()
+    labels = ['[1] Origin', '[2] Acquisition', '[3] NCM']
+
+    _filter = file_manipulate(mode='rt', file_name='filters.txt')
+
+    [print(f'{x[0]}: {x[1]}') for x in zip(labels, _filter)]
+
+    choice.append(input('\nDigite os números dos filtros a serem alterados, ou tecle "C" '
+                        'para confirmar os filtros mostrados: '))
+
+    if choice[-1] not in "Cc":
+        choice = choice[0].split(',')
+
+        for itens in choice:
+            _filter[int(itens) - 1] = (input(f'Filtro {color(text=[int(itens)], cor="red", effect="bold")}: '))
+    return _filter
+
+# STOP MARK: ALTERAR A ESTRUTURA PARA PEGAR OS FILTROS DE UM DICIONARIO/LISTA E NAO DE UM TXT.
+# IMPLEMENTAR A LISTA DOS NOMES DOS ARQUIVOS, PENSAR NA QUESTÃO DE JUNTAR O CAP, ANO E PASTA DO MÊS.
+# OFERECER PARA TROCAR ALGUM DESTES. OU PERGUNTAR OS CAPITULOS/MES/ANO
+
+
 if __name__ == '__main__':
 
     set_header(format=True, text='Simplificador Siscori - V1.1',
                cor='red', effect='bold')
 
-    filters = file_manipulate(mode='rt', file_name='filters.txt')
+    filters = get_filters()
 
-    teste = ['a', 'b', 'c']
 
-    for x in zip(filters, teste):
-        print(f'{x[0]}: {x[1]}')
 
-# STOP MARK: CONTINUAR O PRINT DOS FILTROS ACIMA!!
-# teste
 
-    '''print(f'Pai')
-
-    countries_origin, countries_aquisition, ncm = (line for line in filters)
-
-    
-    if input(f'Alterar filtros?')'''
 '''
 
 
-        
-            print('Não há filtros de países salvos no sistema.')
-            string_temp = ''
-            while True:
-                chosen_path = input(
-                    f'Digite os filtros ou pressione "f" para sair: ')
-                if chosen_path not in 'Ff':
-                    if string_temp == '':
-                        string_temp = chosen_path
-                    else:
-                        string_temp = string_temp + ',' + chosen_path
-                else:
-                    break
-            cabecalho_final()
-            objeto.set_dados(string_temp + '\n', 'at')
-            return string_temp.split(',')
-        else:
-            return objeto.set_path(lista_temp, cor(' Filtros Países ', 'green', '1'))
 
-
-cabecalho_sec(cor('Módulo Simplificador - Versão: 1.0', 'lblue', '1'))
-
-caminho_raiz = '/home/afdt/Documentos/Projeto Imp/'
-caminho_csv_backup = 'Scripts/Config/csv_backup.txt'
-caminho_filtros_backup = 'Scripts/Config/filtros_backup.txt'
-ncm_list = list()
-
-
-caminho_csv_escolhido = inicializacao_arquivos(
-    caminho_raiz, caminho_csv_backup)
-filtro_paises_escolhido = inicializacao_arquivos(
-    caminho_raiz, None, caminho_filtros_backup)
 
 cabecalho_inicio(cor(' Arquivo CSV - XLSX ', 'blue', '1'))
 nome_csv = 'CAPI' + \

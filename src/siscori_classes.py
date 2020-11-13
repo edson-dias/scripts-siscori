@@ -1,5 +1,5 @@
-from utils import file_manipulate
-from decorators import header
+from src.utils import file_manipulate
+from src.decorators import header
 
 
 class SiscoriData:

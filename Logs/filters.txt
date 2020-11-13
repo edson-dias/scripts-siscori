@@ -1,3 +1,3 @@
-china, coreia,hong kong, taiwan
-china, coreia,hong kong, taiwan
-8543, 9582, 7525, 8356
+china,coreia,hong kong,taiwan
+china,coreia,hong kong,taiwan
+8543,9582,7525,8356
