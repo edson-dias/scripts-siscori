@@ -119,7 +119,7 @@ def file_manipulate(**kwargs):
     elif 'r' in mode:
         return DICT_FUNCTIONS_EXTENSIONS.get('r-' + extension)(_data, _file, **kwargs)
 
-
+'''
 def choose_path():
     paths = []
 
@@ -146,6 +146,7 @@ def choose_path():
                     paths.append(LIST_PATHS[int(choice) - 1])
     return paths
 
+'''
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -153,13 +154,13 @@ DIR_CSV = BASE_DIR + '/Plan_CSV'
 DIR_XLSX = BASE_DIR + '/Plan_XLSX'
 DIR_LOGS = BASE_DIR + '/Logs'
 
-LIST_PATHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai',
-              'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
 
 DICT_FILTERS = {
     '1': ['Origin', 'China, Hong Kong, Taiwan, Coreia'],
     '2': ['Acquisition', 'China, Hong Kong, Taiwan, Coreia'],
     '3': ['NCM', '3919, 3926, 7326, 8529, 8531, 8535, 8536, 9107, 9405'],
+    '4': ['Months', 'Jan, Fev, Mar, Abr, Mai, Jun, Jul, Ago, Set, Out, Nov, Dez'],
+    '5': ['Year', '2019, 2020']
 }
 
 DICT_FUNCTIONS_EXTENSIONS = {
@@ -202,4 +203,19 @@ DICT_BACKGROUNDS = {
     'purple': ';45',
     'lblue': ';46',
     'grey': ';47',
+}
+
+MONTHS_CONVERSION = {
+    'Jan': '01',
+    'Fev': '02',
+    'Mar': '03',
+    'Abr': '04',
+    'Mai': '05',
+    'Jun': '06',
+    'Jul': '07',
+    'Ago': '08',
+    'Set': '09',
+    'Out': '10',
+    'Nov': '11',
+    'Dez': '12',
 }
