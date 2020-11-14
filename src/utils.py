@@ -156,13 +156,11 @@ DIR_LOGS = BASE_DIR + '/Logs'
 LIST_PATHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai',
               'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
 
-COMMON_FILES = [
-    '39',
-    '73',
-    '85',
-    '91',
-    '94',
-]
+DICT_FILTERS = {
+    '1': ['Origin', 'China, Hong Kong, Taiwan, Coreia'],
+    '2': ['Acquisition', 'China, Hong Kong, Taiwan, Coreia'],
+    '3': ['NCM', '3919, 3926, 7326, 8529, 8531, 8535, 8536, 9107, 9405'],
+}
 
 DICT_FUNCTIONS_EXTENSIONS = {
     'w-xlsx': _xlsx_writing,
@@ -170,7 +168,6 @@ DICT_FUNCTIONS_EXTENSIONS = {
     'r-csv': _csv_reading,
     'r-txt': _txt_reading,
 }
-
 
 DICT_EXTENSIONS = {
     'xlsx': DIR_XLSX,

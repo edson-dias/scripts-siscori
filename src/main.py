@@ -6,7 +6,7 @@ Autores: Edson, Henrique.
 Versão: 1.0
 """
 
-from src.utils import file_manipulate, color
+from src.utils import file_manipulate, color, DICT_FILTERS
 from src.decorators import header
 
 
@@ -17,25 +17,26 @@ def set_header(**kwargs):
 
 def get_filters():
     choice = list()
-    labels = ['[1] Origin', '[2] Acquisition', '[3] NCM']
 
-    _filter = file_manipulate(mode='rt', file_name='filters.txt')
+    _filter = DICT_FILTERS
 
-    [print(f'{x[0]}: {x[1]}') for x in zip(labels, _filter)]
+    [print(f'[{k}]: {color(text=f"{v[0]}", cor="red")} - {v[1]}') for k, v in _filter.items()]
 
-    choice.append(input('\nDigite os números dos filtros a serem alterados, ou tecle "C" '
+    choice.append(input('\nDigite os números dos filtros a serem alterados, ou tecle "C"\n'
                         'para confirmar os filtros mostrados: '))
 
     if choice[-1] not in "Cc":
         choice = choice[0].split(',')
-
         for itens in choice:
-            _filter[int(itens) - 1] = (input(f'Filtro {color(text=[int(itens)], cor="red", effect="bold")}: '))
+            _filter[itens][1] = (input(f'Filtro {color(text=f"[{itens}]", cor="red", effect="bold")}: '))
+
     return _filter
 
-# STOP MARK: ALTERAR A ESTRUTURA PARA PEGAR OS FILTROS DE UM DICIONARIO/LISTA E NAO DE UM TXT.
-# IMPLEMENTAR A LISTA DOS NOMES DOS ARQUIVOS, PENSAR NA QUESTÃO DE JUNTAR O CAP, ANO E PASTA DO MÊS.
-# OFERECER PARA TROCAR ALGUM DESTES. OU PERGUNTAR OS CAPITULOS/MES/ANO
+
+def get_files_names(*args):
+    # RECEBER AS LISTAS NCM, MESES E UMA LISTA DE ANOS PARA ENTÃO "DESCOBRIR" OS NOMES DOS ARQUIVOS. PENSAR EM LIST COMPREHENSION, COM FORS ANINHADOS!
+
+    pass
 
 
 if __name__ == '__main__':
@@ -44,7 +45,7 @@ if __name__ == '__main__':
                cor='red', effect='bold')
 
     filters = get_filters()
-
+    set_header(format=True, head=False)
 
 
 

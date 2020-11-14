@@ -39,12 +39,10 @@ print(a)
 
 '''
 
-from decorators import header
+dicio = {'1': ['teste: ', 'texto'],
+         '2': ['teste: ', 'texto']}
 
+'''for k, v in dicio.items():
+    print(k, v[0], v[1])'''
 
-@header
-def funcao_teste(x, **kwargs):
-    return print(x)
-
-
-funcao_teste(2, text=2, cor='red', format='False')
+print(dicio['1'][1])
