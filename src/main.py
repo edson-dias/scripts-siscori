@@ -10,6 +10,7 @@ import sys
 
 from src.utils import color, DICT_FILTERS, MONTHS_CONVERSION
 from src.decorators import header
+from src.siscori_classes import SiscoriData
 
 
 @header
@@ -62,6 +63,19 @@ def get_files_names(*args):
     return files_list
 
 
+def data_confirm():
+    while True:
+        cond = input('\nConfirma os dados acima? (Y/N): ')
+        if cond not in 'YyNn':
+            print('Entrada Inválida! Digite novamente.')
+        else:
+            if cond in 'Yy':
+                break
+            else:
+                print('Saindo do script...')
+                sys.exit()
+
+
 if __name__ == '__main__':
 
     set_header(format=True, text='Simplificador Siscori - V1.1',
@@ -74,39 +88,28 @@ if __name__ == '__main__':
 
     [print(f'{color(text=f"{v[0]}", cor="red")} - {v[-1]}') for k, v in filters.items()]
 
-    while True:
-        cond = input('Confirma os dados acima? (Y/N): ')
-        if cond not in 'YyNn':
-            print('Entrada Inválida! Digite novamente.')
-        else:
-            if cond in 'Yy':
-                break
-            else:
-                print('Saindo do script...')
-                sys.exit()
+    data_confirm()
 
+    set_header(format=True, text='Processando os dados...',
+               cor='lblue', effect='bold')
+
+    origin = filters.get('1')[1]
+    acquisition = filters.get('2')[1]
+    ncm = filters.get('3')[1]
+
+    for files in filters['5'][1].replace(" ", "").split(','):
+
+        data = SiscoriData(countries_list=origin, sec_countries_list=acquisition, ncm_list=ncm)
+        data.get_csv(file_name=files)
+        data.set_del()
+        data.set_filtro()
+
+# Flag: Deletar o objeto data criado a cada ciclo do for, assim como jogar as informações de data para o BD a cada ciclo
+# Atenção !!! Os objetos dados não foram testados fora dos testes unitários.
+# Perguntar antes do for se deseja criar arquivos do excel, jogar para o BD ou fazer ambos.
 
 
 '''
-
-
-
-while True:
-    cond = input(cor('Confirma os dados acima? (Y/N): ', 'red', '1'))
-    if cond not in 'YyNn':
-        print('Entrada Inválida! Digite novamente.')
-    else:
-        if cond in 'Yy':
-            break
-        else:
-            print('Saindo do script...')
-            sys.exit()
-cabecalho_final()
-
-cabecalho_inicio(cor(' Processos ', 'yellow', '1'))
-importacoes = Simplificador(nome_csv, caminho_csv_escolhido, ncm=ncm_list,
-                            pa=filtro_paises_escolhido, pc=filtro_paises_escolhido)
-print('Iniciando a leitura do arquivo .csv ...')
 importacoes.get_csv()
 importacoes.set_del()
 print('Filtrando arquivo csv...')

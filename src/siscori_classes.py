@@ -42,7 +42,7 @@ class SiscoriData:
                     row[j] = row[j].strip()
         except IndexError:
             # Criar função que contabilize quantas colunas tem na planilha e retorne um valor, sugerindo a correção.
-            pass
+            print('Número inválido para remoção de colunas!')
 
         return self.backup
 
@@ -67,5 +67,5 @@ class SiscoriData:
         file_manipulate(**kwargs)
 
 
-class Db_Io:
+class DbIo:
     pass

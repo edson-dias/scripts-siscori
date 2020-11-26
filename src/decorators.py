@@ -23,3 +23,5 @@ def header(function):
             return function(*args, **kwargs)
 
     return formatting
+
+# Fazer um decorador com um block try/except!

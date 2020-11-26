@@ -1,45 +1,17 @@
-'''
-def multiplica(funcao):
-    def teste_multiplica(**kwargs):
-        p = kwargs.get('j', 'Não achou nada')
-        print(p)
-        a = funcao(**kwargs)
-        return a * (2+p)
-    return teste_multiplica
+import mysql.connector
 
+from mysql.connector import errorcode
 
-@multiplica
-def func(**kwargs):
-    j = kwargs.get('j')
-    return j
+try:
+    db_connection = mysql.connector.connect(host='localhost', user='root', password='root', database='bd')
+    print("Database connection made!")
 
-
-b = func(j=4)
-print(b)
-
-
-
-def teste(n):
-    def multiplica(funcao):
-        def teste_multiplica(*args):
-            a = funcao(*args)
-            print('Decorador!')
-            return a * 2
-        return teste_multiplica
-    return multiplica
-
-
-@teste(2)
-def func(j):
-    return j
-
-
-a = func(2)
-print(a)
-
-'''
-
-join('teste', 'teste')
-a = ('teste', 'olá')
-a.join(',')
-print(a)
+except mysql.connector.Error as error:
+    if error.errno == errorcode.ER_BAD_DB_ERROR:
+        print("Database doesn't exist")
+    elif error.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+        print("User name or password is wrong")
+    else:
+        print(error)
+else:
+    db_connection.close()
